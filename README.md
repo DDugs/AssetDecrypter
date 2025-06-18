@@ -21,7 +21,7 @@ Developed a custom security mechanism that ensures the sensitive contents of an 
     │   └── DecryptAssets.smali
   - Make sure to change the path in the DecryptAssets.smali from this `.class public LDecryptAssets;` to the actual path you saved the smali file - `.class public Lcom/example/runtime/DecryptAssets;`
   - Now make the changes in the mainapplication smali file under oncreate method add this line
-    `.line 42
+    `.line 42 /n
     invoke-static {p0}, Lcom/example/runtime/DecryptAssets;->run(Landroid/content/Context;)V`
   - Now recompile the apk using apktool b (name of the app folder)
   - Sign it and run it
