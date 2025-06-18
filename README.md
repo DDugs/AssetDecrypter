@@ -2,7 +2,31 @@
 ## 🔐 APK Asset Folder Encryption & Decryption Framework in Go and Java
 Developed a custom security mechanism that ensures the sensitive contents of an Android APK's assets/ folder are encrypted at rest and only decrypted at runtime, using a combination of Go for encryption tooling and Java for runtime decryption. This hybrid approach tightly integrates encryption into the Android app lifecycle and introduces runtime protection through smart injection.
 
-# 📦 Workflow Overview
+## 🧰 Tools & Prerequisites
+
+- Go (>=1.17)
+- Java SDK (for compiling decryption logic)
+- Android SDK (`android.jar`, `d8.bat`, `baksmali.jar`)
+- [apktool](https://ibotpeaches.github.io/Apktool/) (v2.11.1 or compatible)
+- [baksmali/smali](https://github.com/JesusFreke/smali) (v3.0.9 or compatible)
+- `keytool`, `apksigner`, `zipalign` (for signing the APK)
+
+## 🔨 How to Use
+- go run .
+- javac -cp "path\to\android.jar" DecryptAssets.java
+- & "\path\to\d8.bat" --lib "path\to\android.jar" --output=. "DecryptAssets.class"
+- java -jar baksmali-3.0.9-fat.jar d classes.dex -o smali_out/ 
+- Add the created smali file to smali class where the MainApplication or MainActivity smali file is located in this way(in my case)
+- ├── com/example/runtime
+  │   └── DecryptAssets.smali
+- Make sure to change the path in the DecryptAssets.smali from this `.class public LDecryptAssets;` to the actual path you saved the smali file - `.class public Lcom/example/runtime/DecryptAssets;`
+- Now make the changes in the mainapplication smali file under oncreate method add this line
+  `.line 42
+  invoke-static {p0}, Lcom/example/runtime/DecryptAssets;->run(Landroid/content/Context;)V`
+- Now recompile the apk using apktool b (name of the app folder)
+- Sign it and run it
+  
+## 📦 Workflow Overview
 1) Decompile the APK
      - ✅ Using apktool, the target APK is decompiled to expose its resources and Smali code structure. This allows modifications to internal files like assets/ and integration of custom Smali routines.
 
